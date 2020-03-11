@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="Group_241" data-name="Group 241" transform="translate(-29 -48)">
+    <g id="Group_12" data-name="Group 12" transform="translate(-2637 -1137)">
+      <g id="Rectangle_8" data-name="Rectangle 8" transform="translate(2676 1197)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="20" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="19" height="1" fill="none"/>
+      </g>
+      <g id="Rectangle_9" data-name="Rectangle 9" transform="translate(2676 1204)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="20" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="19" height="1" fill="none"/>
+      </g>
+      <g id="Rectangle_10" data-name="Rectangle 10" transform="translate(2676 1211)" fill="#fff" stroke="#707070" stroke-width="1">
+        <rect width="20" height="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="19" height="1" fill="none"/>
+      </g>
+    </g>
+    <rect id="roundboxmenu" width="40" height="40" transform="translate(29 48)" fill="none"/>
+  </g>
+</svg>
