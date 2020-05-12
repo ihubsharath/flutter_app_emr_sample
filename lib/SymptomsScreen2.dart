@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/AppRelatedData.dart';
+import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/Model.dart';
 import 'package:flutter_app/widgets/Searchbox.dart';
 import 'package:flutter_app/widgets/Sidebar.dart';
@@ -19,6 +20,7 @@ var namesList = List();
 final Map<String, int> someMap2 = {};
 var namesList2 = List();
 var symptomsList = List();
+
 var symptomsList2 = List();
 var topBarVisibility = true;
 var sideBarVisibility = false;
@@ -27,9 +29,9 @@ String selectedReason = appRelatedData.durationType[0].type;
 String selectedReasonId = appRelatedData.durationType[0].typeId;
 
 class symptomsWidget extends StatefulWidget {
-  List symptoms, diagnosisList;
+  List symptomsList, diagnosisList;
 
-  symptomsWidget(this.symptoms, this.diagnosisList);
+  symptomsWidget(this.symptomsList, this.diagnosisList);
 
   @override
   _symptomsWidgetState createState() => _symptomsWidgetState();
@@ -37,6 +39,8 @@ class symptomsWidget extends StatefulWidget {
 
 class _symptomsWidgetState extends State<symptomsWidget>
     with TickerProviderStateMixin {
+  var navigatorSymptoms;
+
   DropdownButton androidDropdown() {
     List<DropdownMenuItem<String>> reasonsList = [];
     List reasonsIds = [];
@@ -114,6 +118,11 @@ class _symptomsWidgetState extends State<symptomsWidget>
     topSideOffset =
         Tween<Offset>(begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0))
             .animate(topSideController);
+
+    setState(() {
+      navigatorSymptoms = CustomSymptomsWidget(widget.symptomsList,
+          widget.diagnosisList, symptomsVisibility, selectedSymptom);
+    });
   }
 
   @override
@@ -306,23 +315,25 @@ class _symptomsWidgetState extends State<symptomsWidget>
                                                               namesList[
                                                                   index]) {
                                                             if (entry.value <=
-                                                                widget.symptoms
+                                                                widget
+                                                                    .symptomsList
                                                                     .length) {
                                                               actualIndex =
                                                                   entry.value;
                                                             } else {
-                                                              actualIndex =
-                                                                  widget
-                                                                      .symptoms
-                                                                      .length;
+                                                              actualIndex = widget
+                                                                  .symptomsList
+                                                                  .length;
                                                             }
                                                           }
                                                         }
                                                         symptomsVisibility =
                                                             false;
-                                                        widget.symptoms.insert(
-                                                            actualIndex,
-                                                            namesList[index]);
+                                                        widget.symptomsList
+                                                            .insert(
+                                                                actualIndex,
+                                                                namesList[
+                                                                    index]);
                                                         namesList
                                                             .removeAt(index);
                                                         rightSideController
@@ -332,7 +343,7 @@ class _symptomsWidgetState extends State<symptomsWidget>
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              left: 15.0,
+                                                              left: 10.0,
                                                               right: 10.0),
                                                       child: Icon(
                                                         Icons.cancel,
@@ -357,14 +368,7 @@ class _symptomsWidgetState extends State<symptomsWidget>
                                   ),
                                 ],
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  MainWidget(widget.symptoms,
-                                      symptomsVisibility, selectedSymptom),
-                                  Container(),
-                                ],
-                              ),
+                              navigatorSymptoms,
                             ],
                           ),
                         ),
@@ -597,201 +601,173 @@ class _symptomsWidgetState extends State<symptomsWidget>
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  Container(
-                                    height: namesList2.length == 0
-                                        ? 0
-                                        : (namesList2.length <= 4
-                                            ? 100
-                                            : namesList2.length / 4 * 100),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: GridView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: namesList2.length,
-                                              gridDelegate:
-                                                  new SliverGridDelegateWithFixedCrossAxisCount(
-                                                      childAspectRatio: 4 / 2,
-                                                      crossAxisCount: 4),
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Center(
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 15.0,
-                                                            top: 15,
-                                                            bottom: 15,
-                                                            right: 10),
-                                                    constraints: BoxConstraints(
-                                                      maxWidth:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.7,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.blue,
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    50)),
-                                                        border: Border.all(
-                                                            width: 1,
-                                                            color: Colors.white,
-                                                            style: BorderStyle
-                                                                .solid)),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              selectedSymptom =
-                                                                  namesList2[
-                                                                      index];
-                                                              diagnosisVisibility =
-                                                                  true;
-                                                              leftSideController
-                                                                  .forward();
-                                                            });
-                                                          },
-                                                          child: Text(
-                                                            namesList2[index],
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              for (var entry
-                                                                  in someMap2
-                                                                      .entries) {
-                                                                if (entry.key ==
-                                                                    namesList2[
-                                                                        index]) {
-                                                                  if (entry
-                                                                          .value <=
-                                                                      widget
-                                                                          .diagnosisList
-                                                                          .length) {
-                                                                    actualIndex =
-                                                                        entry
-                                                                            .value;
-                                                                  } else {
-                                                                    actualIndex = widget
-                                                                        .diagnosisList
-                                                                        .length;
-                                                                  }
-                                                                }
-                                                              }
-                                                              diagnosisVisibility =
-                                                                  false;
-                                                              widget
-                                                                  .diagnosisList
-                                                                  .insert(
-                                                                      actualIndex,
-                                                                      namesList2[
-                                                                          index]);
-                                                              namesList2
-                                                                  .removeAt(
-                                                                      index);
-                                                              leftSideController
-                                                                  .reverse();
-                                                            });
-                                                          },
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left: 5.0),
-                                                            child: Icon(
-                                                              Icons.cancel,
-                                                              size: 17,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 25, right: 25),
+                                        child: Wrap(
+                                          spacing: 20,
+                                          runSpacing: 20,
+                                          children: List<Widget>.generate(
+                                              namesList2.length, (int index) {
+                                            return Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20.0,
+                                                  top: 12.0,
+                                                  bottom: 12.0),
+                                              constraints: BoxConstraints(
+                                                maxWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.7,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xffC90144),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(50)),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.white,
+                                                      style:
+                                                          BorderStyle.solid)),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        selectedSymptom =
+                                                            namesList2[index];
+                                                        diagnosisVisibility =
+                                                            true;
+                                                        leftSideController
+                                                            .forward();
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      namesList2[index],
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   ),
-                                                );
-                                              }),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        for (var entry
+                                                            in someMap2
+                                                                .entries) {
+                                                          if (entry.key ==
+                                                              namesList2[
+                                                                  index]) {
+                                                            if (entry.value <=
+                                                                widget
+                                                                    .diagnosisList
+                                                                    .length) {
+                                                              actualIndex =
+                                                                  entry.value;
+                                                            } else {
+                                                              actualIndex = widget
+                                                                  .diagnosisList
+                                                                  .length;
+                                                            }
+                                                          }
+                                                        }
+                                                        diagnosisVisibility =
+                                                            false;
+                                                        widget.diagnosisList
+                                                            .insert(
+                                                                actualIndex,
+                                                                namesList2[
+                                                                    index]);
+                                                        namesList2
+                                                            .removeAt(index);
+                                                        leftSideController
+                                                            .reverse();
+                                                      });
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10.0),
+                                                      child: Icon(
+                                                        Icons.cancel,
+                                                        size: 30,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: Divider(
-                                            height: 1,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      namesList2.length == 0
+                                          ? Container()
+                                          : Divider(
+                                              height: 30,
+                                              color: Colors.grey,
+                                            ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              Expanded(
-                                child: GridView.builder(
-                                    itemCount: widget.diagnosisList.length,
-                                    gridDelegate:
-                                        new SliverGridDelegateWithFixedCrossAxisCount(
-                                            childAspectRatio: 4 / 2,
-                                            crossAxisCount: 4),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Center(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              diagnosisVisibility = true;
-                                              someMap2[widget
-                                                      .diagnosisList[index]] =
-                                                  index;
-                                              namesList2.add(
-                                                  widget.diagnosisList[index]);
-                                              selectedSymptom =
-                                                  widget.diagnosisList[index];
-                                              leftSideController.forward();
-                                              widget.diagnosisList
-                                                  .removeAt(index);
-                                            });
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.all(15.0),
-                                            constraints: BoxConstraints(
-                                              maxWidth: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.7,
-                                            ),
-                                            decoration: BoxDecoration(
-//                                              color: Color(0xffFFF2F7),
-                                              border: Border.all(
-                                                color: Colors.grey.shade400,
-                                              ),
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(50.0),
-                                              ),
-                                            ),
-                                            child: Text(
-                                                widget.diagnosisList[index],
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 25, right: 25),
+                                child: Wrap(
+                                  spacing: 20,
+                                  runSpacing: 20,
+                                  children: List<Widget>.generate(
+                                      widget.diagnosisList.length, (int index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          diagnosisVisibility = true;
+                                          someMap2[widget
+                                              .diagnosisList[index]] = index;
+                                          namesList2
+                                              .add(widget.diagnosisList[index]);
+                                          selectedSymptom =
+                                              widget.diagnosisList[index];
+                                          leftSideController.forward();
+                                          widget.diagnosisList.removeAt(index);
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12.0),
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.7,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xffFFF2F7),
+                                          border: Border.all(
+                                            color: Color(0xffC90144),
+                                          ),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(50.0),
                                           ),
                                         ),
-                                      );
-                                    }),
+                                        child: Text(widget.diagnosisList[index],
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                    );
+                                  }),
+                                ),
                               ),
                             ],
                           ),
@@ -962,59 +938,72 @@ class _symptomsWidgetState extends State<symptomsWidget>
   }
 }
 
-class MainWidget extends StatefulWidget {
-  List symptoms;
+class CustomSymptomsWidget extends StatefulWidget {
+  List symptomsList, diagnosisList;
   bool symptomsVisibility;
   String selectedSymptom;
-  MainWidget(this.symptoms, this.symptomsVisibility, this.selectedSymptom);
+
+  CustomSymptomsWidget(this.symptomsList, this.diagnosisList,
+      this.symptomsVisibility, this.selectedSymptom);
 
   @override
-  _MainWidgetState createState() => _MainWidgetState();
+  _CustomSymptomsWidgetState createState() => _CustomSymptomsWidgetState();
 }
 
-class _MainWidgetState extends State<MainWidget> {
+class _CustomSymptomsWidgetState extends State<CustomSymptomsWidget> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 25, right: 25),
-      child: Wrap(
-        spacing: 20,
-        runSpacing: 20,
-        children: List<Widget>.generate(widget.symptoms.length, (int index) {
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                widget.symptomsVisibility = true;
-                someMap[widget.symptoms[index]] = index;
-                namesList.add(widget.symptoms[index]);
-                widget.selectedSymptom = widget.symptoms[index];
-                rightSideController.forward();
-                widget.symptoms.removeAt(index);
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.7,
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xffFFF2F7),
-                border: Border.all(
-                  color: Color(0xffC90144),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+//                                  MainWidget(widget.symptoms,
+//                                      symptomsVisibility, selectedSymptom),
+        Padding(
+          padding: const EdgeInsets.only(left: 25, right: 25),
+          child: Wrap(
+            spacing: 20,
+            runSpacing: 20,
+            children:
+                List<Widget>.generate(widget.symptomsList.length, (int index) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    widget.symptomsVisibility = true;
+                    someMap[widget.symptomsList[index]] = index;
+                    namesList.add(widget.symptomsList[index]);
+                    widget.selectedSymptom = widget.symptomsList[index];
+                    rightSideController.forward();
+                    widget.symptomsList.removeAt(index);
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12.0),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xffFFF2F7),
+                    border: Border.all(
+                      color: Color(0xffC90144),
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(50.0),
+                    ),
+                  ),
+                  child: Text(widget.symptomsList[index],
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold)),
                 ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(50.0),
-                ),
-              ),
-              child: Text(widget.symptoms[index],
-                  style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold)),
-            ),
-          );
-        }),
-      ),
+              );
+            }),
+          ),
+        ),
+        Container(
+          height: 20,
+        ),
+      ],
     );
   }
 }

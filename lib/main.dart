@@ -56,7 +56,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     // TODO: implement initState
-    fetchEMRdata = getEMRdata();
+//    fetchEMRdata = getEMRdata();
+    navigator = Container();
+    getEMRdata2();
 
     super.initState();
   }
@@ -67,62 +69,99 @@ class _MyHomePageState extends State<MyHomePage> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+//    return SafeArea(
+//      child: FutureBuilder<Model>(
+//        future: fetchEMRdata,
+//        builder: (context, snapshot) {
+//          if (!snapshot.hasData)
+//            return Center(
+//                child: CircularProgressIndicator(
+//              backgroundColor: Colors.white,
+//            ));
+//          return Scaffold(
+//            backgroundColor: Colors.white,
+//            appBar: AppBar(
+//              title: Text(widget.title),
+//            ),
+//            body: pageOptions[selectedPage],
+//            bottomNavigationBar: BottomNavigationBar(
+//              currentIndex: selectedPage,
+//              onTap: (int index) {
+//                setState(() {
+//                  selectedPage = index;
+//                });
+//              },
+//              items: [
+//                BottomNavigationBarItem(
+//                  icon: Icon(Icons.home),
+//                  title: Text('Home'),
+//                ),
+//                BottomNavigationBarItem(
+//                  icon: Icon(Icons.local_hospital),
+//                  title: Text('Hospital'),
+//                ),
+//                BottomNavigationBarItem(
+//                  icon: Icon(Icons.airplanemode_active),
+//                  title: Text('Airport'),
+//                ),
+//              ],
+//            ),
+//          );
+//        },
+//      ),
+//    );
     return SafeArea(
-      child: FutureBuilder<Model>(
-        future: fetchEMRdata,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Center(
-                child: CircularProgressIndicator(
-              backgroundColor: Colors.white,
-            ));
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              title: Text(widget.title),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: pageOptions[selectedPage],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: selectedPage,
+          onTap: (int index) {
+            setState(() {
+              selectedPage = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
             ),
-            body: pageOptions[selectedPage],
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: selectedPage,
-              onTap: (int index) {
-                setState(() {
-                  selectedPage = index;
-                });
-              },
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text('Home'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.local_hospital),
-                  title: Text('Hospital'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.airplanemode_active),
-                  title: Text('Airport'),
-                ),
-              ],
+            BottomNavigationBarItem(
+              icon: Icon(Icons.local_hospital),
+              title: Text('Hospital'),
             ),
-          );
-        },
+            BottomNavigationBarItem(
+              icon: Icon(Icons.airplanemode_active),
+              title: Text('Airport'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future<Model> getEMRdata() async {
-    Response response = await get("https://api.myjson.com/bins/12kfjm");
+    Response response = await get(
+        "http://qurix.ai:8080/qurix_uat/openapi/patientVisits?mobileNo=9959323979&isActive=false");
 //    Response response =
 //        await get("http://qurix.ai:8080/qurix_uat/openapi/orginfo/"
 //            "getlocations?seuuid=b31e2a35-eab4-47c3-9493-327d47673ebc");
+    print("aaaa" + response.body.toString());
+
     emrDataList = Model.fromJson(jsonDecode(response.body));
-    // print("emrdata" + emrDataList.toString());
+    print("emrdata" + emrDataList.appointments.length.toString());
+
+    // var jsonData = jsonDecode(response.body);
     setState(() {
       _saving = true;
-      for (var item in emrDataList.symptoms) {
-        symptomsList.add(item.name);
-        diagnosisList.add(item.name);
+      for (int i = 0; i < emrDataList.appointments.length; i++) {
+        symptomsList.add(emrDataList.appointments[i].patientName);
+        diagnosisList.add(emrDataList.appointments[i].patientName);
       }
+      print('symptoms' + symptomsList.toString());
       navigator = symptomsWidget(symptomsList, diagnosisList);
       selectedPage = 0;
       pageOptions = [
@@ -132,6 +171,30 @@ class _MyHomePageState extends State<MyHomePage> {
       ];
     });
     return emrDataList;
+  }
+
+  getEMRdata2() async {
+    Response response = await get(
+        "http://qurix.ai:8080/qurix_uat/openapi/patientVisits?mobileNo=9959323979&isActive=false");
+    var jsonData = jsonDecode(response.body);
+    print("emrdata" + jsonData['appointments'].toString());
+
+    // var jsonData = jsonDecode(response.body);
+    setState(() {
+      _saving = true;
+      for (int i = 0; i < jsonData['appointments'].length; i++) {
+        symptomsList.add(jsonData['appointments'][i]['patientName']);
+        diagnosisList.add(jsonData['appointments'][i]['patientName']);
+      }
+      print('symptoms' + symptomsList.toString());
+      navigator = symptomsWidget(symptomsList, diagnosisList);
+      selectedPage = 0;
+      pageOptions = [
+        navigator,
+        ScreenTwo(),
+        ScreenThree(),
+      ];
+    });
   }
 }
 
